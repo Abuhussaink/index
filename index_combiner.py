@@ -1,4 +1,5 @@
 import sys
+import io
 
 # Parse CLI flags
 args = sys.argv[1:]
@@ -8,7 +9,7 @@ if len(args) == 0:
 # Get file data
 index = {}
 for count, filename in enumerate(args):
-    with open(filename, "r") as f:
+    with io.open(filename, "r", encoding="utf-8") as f:
         for line in f.read().split("\n"):
             if ": " not in line:
                 continue
@@ -17,7 +18,7 @@ for count, filename in enumerate(args):
                 index[index_key] = ""
             index[index_key] += f"{count + 1}({pages}) | "
 
-# Trim trialing " | "s
+# Trim trailing " | "s
 for key in index.keys():
     index[key] = index[key].rstrip(" | ")
 
@@ -27,5 +28,6 @@ for key in index.keys():
     lines.append(f"{key}: {index[key]}")
 lines.sort()
 
+# Print output
 for line in lines:
-    print(line)
+    sys.stdout.buffer.write((line + '\n').encode('utf-8'))
